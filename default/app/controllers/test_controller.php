@@ -23,9 +23,9 @@ class TestController extends AppController {
 		$this->data =  $c;
 	}
 	
-	public function put(){
+	public function put($id){
 		$data =  Rest::param();
-		$auth =  Book::find($data['id']);
+		$auth =  Book::find($id);
 		$auth->update_attributes($data);
 		$auth->save();
 		die($auth->to_json());
