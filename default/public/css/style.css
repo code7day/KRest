@@ -1,3 +1,16 @@
+/*Formato*/
+div#head, div#foot{background:black;color:#fff;padding:1ex;text-align:center}
+div#foot{clear:both;}
+/*List*/
+ul#list{float:left;height:30ex;margin-right:5ex;}
+ul#list li{list-style-type:none; padding:0.5ex;margin:0.1ex;border-bottom:1px solid #000}
+ul#list li:hover{color:#fff;background:#000}
+ul#list li a{text-decoration:none;display:block;}
+/*form*/
+form#data{padding:1ex;margin:2ex}
+input{display:block; border:1px #000 solid ; border-radius:1ex;padding:.3ex;}
+
+
 /* Formatea los mensajes Flash::xxx() de KumbiaPHP */
 .flash {
 	border: 1px solid;
@@ -33,28 +46,4 @@
 
 .highlight {
 	background: #FFFFDF;
-}
-
-div.autocomplete {
-	position: relative;
-	background-color: white;
-	border: 1px solid #888;
-	margin: 0;
-	padding: 0;
-}
-div.autocomplete ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-div.autocomplete ul li.selected {
-	background-color: #ffb;
-}
-div.autocomplete ul li {
-      list-style-type: none;
-      display: block;
-	  margin: 1px 0;
-      padding: 1px;
-      cursor: pointer;
-      font-size: 10px;
 }
