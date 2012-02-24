@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
  <head>
-  <meta http-equiv='Content-type' content='text/html; charset=<?php echo APP_CHARSET ?>' />
-  <title>KumbiaPHP web &amp; App Framework &amp; BackBone.js</title>
-  <?php Tag::css('style') ?>
-  <?php echo Html::includeCss() ?>
+	<meta http-equiv='Content-type' content='text/html; charset=<?php echo APP_CHARSET ?>' />
+	<title>KumbiaPHP web &amp; App Framework &amp; BackBone.js</title>
+	<link href="<?php echo PUBLIC_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet"/> 
+
 </head>
 <body>
-	<div id='head'>
+	<div id='head' class="page-header">
 	<h1>Administrador de Libros</h1>
 	</div>
         <?php View::content(); ?>
-	<div id="foot">Copyrigth Alberto Berroteran 2012</div>
+	<div id="foot" class="page-footer">Copyrigth Alberto Berroteran 2012</div>
 </body>
 </html>

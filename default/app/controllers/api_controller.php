@@ -2,7 +2,6 @@
 class ApiController extends AppController {
 	protected function before_filter()
 	{
-		Load::lib('rest');
 		Load::models('books');
 		/*El nombre de la accion se convierte en parametro*/
 	    if(is_numeric($this->action_name)){
@@ -15,6 +14,7 @@ class ApiController extends AppController {
 	public function  get($id=null){
 		$book = new Books();
 		$this->data = $book->find();
+		var_dump($book->getPages(1));
 	}
 	
 	public function put($id){
