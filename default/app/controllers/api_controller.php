@@ -14,29 +14,27 @@ class ApiController extends AppController {
 	
 	public function  get($id=null){
 		$book = new Books();
-		$this->data =  $book->find();
+		$this->data = $book->find();
 	}
 	
 	public function put($id){
 		$data =  Rest::param();
-		$auth =  Book::find($id);
-		$auth->update_attributes($data);
-		$auth->save();
-		die($auth->to_json());
+		$book = new Books();
+		$book->find($id);
+		$book->update($data);
+		$this->data = $book;
 	}
 	
 	public function post(){
 		$data =  Rest::param();
-		$post = new Book($data);
-		$post->save();
-		die($post->to_json());
+		$book = new Books($data);
+		$book->save();
+		$this->data = $book;
 	}
 	
 	public function delete($id){
-		$data =  Rest::param();
-		var_dump($data);
-		$auth =  Book::find($id);
-		$auth->delete();
+		$book = new Books($data);
+		$book->delete($id);
 		$this->data = null;
 	}
 }
