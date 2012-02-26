@@ -3,20 +3,11 @@ tpl = {
     templates: {},
     url: '',
     load: function(names, callback) {
-        var that = this;
-        var loadTemplate = function(index) {
-            var name = names[index];
-            $.get(that.url  + name , function(data) {
-                that.templates[name] = data;
-                index++;
-                if (index < names.length) {
-                    loadTemplate(index);
-                } else {
-                    callback();
-                }
-            });
-        }
-        loadTemplate(0);
+		for(var i =0; i < names.length;i++){
+			var n = '#tpl-'+names[i];
+			this.templates[names[i]] = $(n).html();
+		}
+		callback();
     },
     // Get template by name from hash of preloaded templates
     get: function(name) {
@@ -31,17 +22,36 @@ var Libro = Backbone.Model.extend({
 		id: null,
 		title: null,
 		author: null
-    },
-    initialize: function() {
-       console.info('Iniciado');
     }
 });
 
 var Libreria = Backbone.Collection.extend({
-    // Reference to this collection's model.
     model: Libro,
     url: "/rest/api"
 });
+
+MsgView = Backbone.View.extend({
+	el: $('#msgbox'),
+	
+    initialize: function() {
+		console.info('MsgBox');
+		this.template = _.template(tpl.get('msg'));
+    },
+ 
+    render: function(arg) {
+		var defaults = {
+			title:'',
+			text:'',
+			type:'info'
+		}
+		data = _.defaults(arg, defaults);
+		var e = $(this.el);
+		e.html(this.template(data));
+        e.fadeIn(500).delay(3000).fadeOut();
+    }
+});
+	
+
 
 ListView = Backbone.View.extend({
     el: $('#list'), 
@@ -54,7 +64,6 @@ ListView = Backbone.View.extend({
     },
 	
 	add:function(wine){
-		console.info(wine);
 		 $(this.el).append(new LibroShow({model: wine}).render().el);
 	},
 	
@@ -127,7 +136,7 @@ window.DetalleView = Backbone.View.extend({
  
     change: function(event) {
         var target = event.target;
-        console.log('changing ' + target.id + ' from: ' + target.defaultValue + ' to: ' + target.value);
+        app.msgbox.render({text: 'changing ' + target.id + ' from: ' + target.defaultValue + ' to: ' + target.value});
     },
  
     saveWine: function() {
@@ -138,7 +147,6 @@ window.DetalleView = Backbone.View.extend({
         
         if (this.model.isNew()) {
             var self = this;
-            console.info('Todo ok');
             app.wineList.create(this.model, {
                 success: function() {
 					app.navigate('view/'+self.model.id, false);
@@ -152,11 +160,10 @@ window.DetalleView = Backbone.View.extend({
     },
  
     deleteWine: function() {
-		console.info('Eliminar');
         this.model.destroy({
             success: function() {
-               
-            }
+				app.msgbox({title:'Correcto', text:'Eliminación Correcta', type:'success'})
+			}
         });
         return false;
     },
@@ -169,9 +176,6 @@ window.DetalleView = Backbone.View.extend({
 
 
 window.HeaderView = Backbone.View.extend({
-
-	el: $('#header'),
-
     initialize: function() {
 		this.template = _.template(tpl.get('header'));
 		this.render();
@@ -187,6 +191,7 @@ window.HeaderView = Backbone.View.extend({
     },
 
 	newWine: function(event) {
+		app.msgbox('Informacion', 'Permite agregar un nuevo Libro');
 		app.navigate("view/new", true);
 		return false;
 	}
@@ -199,6 +204,16 @@ var AppRouter = Backbone.Router.extend({
         "view/new" : "nuevo",
         "view/:id" : "view"
     },
+	
+	initialize: function() {
+		/*Permite le uso de los MsgBox*/
+        this.msgbox =  function(a,b,c){
+			var data = {title:a, text:b, type:c}
+			new MsgView().render(data);
+		}
+		
+        $("#header").html(new HeaderView().render().el);
+    },
  
     list: function() {
         this.wineList = new Libreria();
@@ -209,8 +224,6 @@ var AppRouter = Backbone.Router.extend({
     },
     
     view:function(id){
-		console.info('Edit');
-		
 		this.wine = this.wineList.get(id);
         if (app.wineView) app.wineView.close();
         this.wineView = new DetalleView({model: this.wine});
@@ -218,16 +231,14 @@ var AppRouter = Backbone.Router.extend({
      }, 
      
      nuevo: function() {
-		console.info('New');
         if (app.wineView) app.wineView.close();
         this.wineView = new DetalleView({model: new Libro()});
         this.wineView.render();
      }
 });
 
-tpl.load(['header', 'item', 'form'], function() {
+tpl.load(['header', 'item', 'form', 'msg'], function() {
 	app = new AppRouter();
 	Backbone.history.start();
-	var Header = new HeaderView();
 });
 

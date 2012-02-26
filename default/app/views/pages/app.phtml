@@ -1,9 +1,15 @@
-<div id="header"></div>
-<div class="row">
-	<div class="span4">
-		<ul id="list" class="unstyled"></ul>
+<?php 
+	echo View::jsTpl('header', 'item', 'form', 'msg');
+?>
+
+<div id="msgbox"></div>
+<div id="header" class="w90 auto"></div>
+
+<div class="row w90 auto">
+	<div class="w25">
+		<ul id="list" class="unstyled data"></ul>
 	</div>
-	 <div class="span4">
+	 <div class="w60">
 		<div id="show"></div>
 	</div>
 </div>
