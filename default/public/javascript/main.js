@@ -211,23 +211,33 @@ var AppRouter = Backbone.Router.extend({
 			var data = {title:a, text:b, type:c}
 			new MsgView().render(data);
 		}
-		
         $("#header").html(new HeaderView().render().el);
+
     },
+    
+	load:function(c){
+		if(!this.bList){
+			this.bList = new Libreria();
+			this.bListView = new ListView({model: this.bList});
+			this.bList.fetch({
+				success: function() {
+					if(c)c();
+				}	
+			});
+		}
+	},
  
     list: function() {
-        this.wineList = new Libreria();
-        this.wineListView = new ListView({model: this.wineList});
-        this.wineList.fetch({
-			data:{page:1}
-        });
+		this.load();
     },
     
     view:function(id){
-		this.wine = this.wineList.get(id);
-        if (app.wineView) app.wineView.close();
-        this.wineView = new DetalleView({model: this.wine});
-        this.wineView.render();
+		this.load(function(){
+			this.book = app.bList.get(id);
+			if (app.bView) app.bView.close();
+			this.bView = new DetalleView({model: this.book});
+			this.bView.render();
+		});
      }, 
      
      nuevo: function() {

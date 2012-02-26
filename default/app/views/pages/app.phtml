@@ -13,6 +13,9 @@
 		<div id="show"></div>
 	</div>
 </div>
+
+
+ 
        
 
 
@@ -20,4 +23,5 @@
 <?php echo Tag::js('jquery');?>
 <?php echo Tag::js('underscore');?>
 <?php echo Tag::js('backbone');?>
-<?php echo Tag::js('main');?>
+<script  src="<?php echo PUBLIC_PATH ?>javascript/require.js" data-main="<?php echo PUBLIC_PATH ?>javascript/main.js"></script> 
+
