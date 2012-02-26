@@ -1,0 +1,21 @@
+<form id="data" class="form-horizontal">
+<label for="id">id</label>
+<div class="input">
+<input type="text" placeholder="id" id="id" readonly value="<%=id%>"/> 
+</div>
+<label for="author">Autor</label>
+<input type="text" placeholder="Autor" id="author" value="<%=author%>"/> 
+<label for="title">Título</label>
+<input type="text" placeholder="Titulo" id="title" value="<%=title%>"/>
+<div class="center">
+	<button class="save btn btn-primary btn-large" type="button">
+		<span class="icon-ok"></span>
+		Save</button>
+	<% if(id) { %>
+	<button class="delete btn btn-large btn-danger" type="button">
+		<span class=" icon-trash"></span>
+		Delete</<button>
+	<%}%>
+			
+</div>
+</form>
