@@ -15,6 +15,16 @@ tpl = {
     }
 };
 
+$.fn.toJson=function(form){
+    var data = {};
+    form = $('input, textarea, select', form);
+    form.each(function(index) {
+		data[$(this).attr('id')] = $(this).val();
+	});
+    return data;
+}
+
+
 
 var Libro = Backbone.Model.extend({
 	urlRoot: '/rest/api/',
@@ -47,7 +57,7 @@ MsgView = Backbone.View.extend({
 		data = _.defaults(arg, defaults);
 		var e = $(this.el);
 		e.html(this.template(data));
-        e.fadeIn(500).delay(3000).fadeOut();
+        e.fadeIn(500).delay(1000).fadeOut(500);
     }
 });
 	
@@ -79,8 +89,6 @@ ListView = Backbone.View.extend({
 var LibroShow =Backbone.View.extend({
     tagName: "li",
  
-    
- 
     initialize: function() {
 		this.template = _.template(tpl.get('item'));
 		this.model.bind("change", this.render, this);
@@ -93,31 +101,14 @@ var LibroShow =Backbone.View.extend({
     },
  
     close: function() {
+		console.info('Cerrado' + this)
         $(this.el).unbind();
         $(this.el).remove();
     }
 });
  
-
-
-function ser(form) {
-    var data = {};
-    form = $('input, textarea, select', form);
-    form.each(function(index) {
-		data[$(this).attr('id')] = $(this).val();
-	});
-    return data;
-}
-
-
-
-
 window.DetalleView = Backbone.View.extend({
- 
     el: $('#show'),
- 
-    
- 
     initialize: function() {
 		this.template= _.template(tpl.get('form'));
         this.model.bind("change", this.render, this);
@@ -136,7 +127,6 @@ window.DetalleView = Backbone.View.extend({
  
     change: function(event) {
         var target = event.target;
-        app.msgbox.render({text: 'changing ' + target.id + ' from: ' + target.defaultValue + ' to: ' + target.value});
     },
  
     saveWine: function() {
@@ -146,31 +136,39 @@ window.DetalleView = Backbone.View.extend({
         });
         
         if (this.model.isNew()) {
+			console.info(this.model);
             var self = this;
-            app.wineList.create(this.model, {
+            app.bList.create(this.model, {
                 success: function() {
 					app.navigate('view/'+self.model.id, false);
                 }
             });
         } else {
-            this.model.save();
+			console.info('ok')
+            this.model.save(null, {
+				success: function() {
+					app.msgbox("Correcto", "Actualizad Correctamente", 'success');
+				}
+			});
         }
- 
         return false;
     },
  
     deleteWine: function() {
         this.model.destroy({
             success: function() {
-				app.msgbox({title:'Correcto', text:'Eliminación Correcta', type:'success'})
+				app.msgbox("Correcto", "Eliminación Correcta", 'success');
+				window.history.back();
 			}
         });
         return false;
     },
  
     close: function() {
+		
         $(this.el).unbind();
         $(this.el).empty();
+        console.info('Close');
     }
 });
 
@@ -212,7 +210,6 @@ var AppRouter = Backbone.Router.extend({
 			new MsgView().render(data);
 		}
         $("#header").html(new HeaderView().render().el);
-
     },
     
 	load:function(c){
@@ -221,10 +218,12 @@ var AppRouter = Backbone.Router.extend({
 			this.bListView = new ListView({model: this.bList});
 			this.bList.fetch({
 				success: function() {
+					app.msgbox('Cargado', 'Lista cargada', 'success');
 					if(c)c();
 				}	
 			});
-		}
+		}else if(c)
+			c();
 	},
  
     list: function() {
@@ -233,17 +232,17 @@ var AppRouter = Backbone.Router.extend({
     
     view:function(id){
 		this.load(function(){
-			this.book = app.bList.get(id);
+			var book = app.bList.get(id);
 			if (app.bView) app.bView.close();
-			this.bView = new DetalleView({model: this.book});
-			this.bView.render();
+			app.bView = new DetalleView({model: book});
+			app.bView.render();
 		});
      }, 
      
      nuevo: function() {
-        if (app.wineView) app.wineView.close();
-        this.wineView = new DetalleView({model: new Libro()});
-        this.wineView.render();
+        if (app.bView) app.bView.close();
+        this.bView = new DetalleView({model: new Libro()});
+        this.bView.render();
      }
 });
 
@@ -251,4 +250,3 @@ tpl.load(['header', 'item', 'form', 'msg'], function() {
 	app = new AppRouter();
 	Backbone.history.start();
 });
-
